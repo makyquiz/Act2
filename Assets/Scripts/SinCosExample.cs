@@ -9,27 +9,37 @@ public class SinCosExample : MonoBehaviour
     float degrees = 360;
     public int directions;
 
-    public Transform target;
+    public Transform[] targets;
     public float powerUpRange = 0.5f;
 
-    private bool powerUpUsed = false;
+    private bool[] powerUpUsed;
 
     void Start()
     {
         InvokeRepeating("Fire", 1, 2f);
+
+        powerUpUsed = new bool[targets.Length];
+
     }
 
     void Update()
     {
-        var distance = Mathf.Sqrt(Mathf.Pow(target.position.x - this.transform.position.x, 2)
-        + Mathf.Pow(target.position.y - this.transform.position.y, 2));
-
-        if (!powerUpUsed && distance < powerUpRange)
+        for (int i = 0; i < targets.Length; i++)
         {
-            directions++;
-            powerUpUsed = true;
+            if (targets[i] == null || powerUpUsed[i]) continue;
 
-            target.gameObject.SetActive(false);
+            var distance = Mathf.Sqrt(
+                Mathf.Pow(targets[i].position.x - this.transform.position.x, 2) +
+                Mathf.Pow(targets[i].position.y - this.transform.position.y, 2)
+            );
+
+            if (distance < powerUpRange)
+            {
+                directions++;
+                powerUpUsed[i] = true;
+
+                targets[i].gameObject.SetActive(false);
+            }
         }
     }
 
